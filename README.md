@@ -33,6 +33,6 @@ A number of things have not been tested by me. They include:
 
 * Detecting non-TLS connections in a stateful firewall (there may be problems with v6 fragment handling, for instance)
 * Detecting UDP TLS (DTLS)
-* General accuracy of the rules
+* Particular accuracy of the rules (though they do seem to work)
 
 Improvements and further test results would be gladly accepted :)
