@@ -1,0 +1,29 @@
+# Based on Android source code from https://android.googlesource.com/platform/system/netd/+/master/server/StrictController.cpp, commit cc40ed925531f711f1b6652b12c5bf44f514cdf8
+# iptables (IPv4) rules assembled by Michael Fincham <michael@hotplate.co.nz> 2018-02-11
+
+*filter
+:st_clear_caught - [0:0]
+:st_clear_detect - [0:0]
+
+# Reject and log new plaintext connections
+-A st_clear_caught -j LOG --log-prefix "Plaintext connection rejected: "
+-A st_clear_caught -j REJECT
+
+# Allow any packets belonging to known TLS connections
+-A st_clear_detect -m connmark --mark 0x01000000 -j RETURN
+
+# Look for IPv4 TCP/UDP connections with TLS/DTLS header and mark them
+-A st_clear_detect -p tcp -m u32 --u32 "0>>22&0x3C@ 12>>26&0x3C@ 0&0xFFFF0000=0x16030000 && 0>>22&0x3C@ 12>>26&0x3C@ 4&0x00FF0000=0x00010000" -j CONNMARK --or-mark 0x01000000
+-A st_clear_detect -p udp -m u32 --u32 "0>>22&0x3C@ 8&0xFFFF0000=0x16FE0000 && 0>>22&0x3C@ 20&0x00FF0000=0x00010000" -j CONNMARK --or-mark 0x01000000
+
+# Skip newly classified connections from above
+-A st_clear_detect -m connmark --mark 0x01000000 -j RETURN
+
+# Handle TCP/UDP payloads that didn't match TLS/DTLS filters above,
+# which means we've probably found cleartext data.  The TCP variant
+# depends on u32 returning false when we try reading into the message
+# body to ignore empty ACK packets.
+-A st_clear_detect -p tcp -m state --state ESTABLISHED -m u32 --u32 "0>>22&0x3C@ 12>>26&0x3C@ 0&0x0=0x0" -j st_clear_caught
+-A st_clear_detect -p udp -j st_clear_caught
+
+COMMIT
