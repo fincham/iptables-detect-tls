@@ -8,8 +8,8 @@ This is a re-implementation of the same matches in plain `iptables` syntax, allo
 
 For instance, if you want to prevent your local machine from making a TCP or UDP connection without using TLS, you might do something like this as part of your startup or interface bringup scripts:
 
-    fincham@postel:~$ sudo iptables-restore < v4
-    fincham@postel:~$ sudo ip6tables-restore < v6
+    fincham@postel:~$ sudo iptables-restore -n < v4
+    fincham@postel:~$ sudo ip6tables-restore -n < v6
     fincham@postel:~$ sudo iptables -A OUTPUT -p tcp --dport 22 -j ACCEPT
     fincham@postel:~$ sudo iptables -A OUTPUT -p tcp --dport 53 -d 8.8.8.8 -j ACCEPT
     fincham@postel:~$ sudo iptables -A OUTPUT -p udp --dport 53 -d 8.8.8.8 -j ACCEPT
