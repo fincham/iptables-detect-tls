@@ -1,6 +1,6 @@
 # iptables-detect-tls
 
-Android contains code to try and log or prevent applications from using non-TLS TCP or UDP to commnuicate (https://android.googlesource.com/platform/system/netd/+/android-m-preview/server/StrictController.cpp).
+Android contains code to try and log or prevent applications from using non-TLS TCP or UDP to commnuicate (https://android.googlesource.com/platform/system/netd/+/master/server/StrictController.cpp).
 
 This is a re-implementation of the same matches in plain `iptables` syntax, allowing you to make more creative use of this capability.
 
